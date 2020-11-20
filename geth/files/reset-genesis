@@ -1,0 +1,69 @@
+#!/bin/bash  
+# Short script to generate and upload a new genesis block
+# Assumptions:
+# - The Pi-puck IDs (initial sealers) are listed in pi-pucks.txt
+# - puppeth is installed
+parent_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+echo "${parent_path} is PARENT PATH"
+
+NUM_NODES=$1
+rm "${parent_path}/genesis.conf"
+
+CONTRACTADDRESS="0000000000000000000000000000000000000123"
+
+
+########## Genesis Configurations ############
+
+echo "2" >> "${parent_path}/genesis.conf"  # Manage existing genesis
+echo "3" >> "${parent_path}/genesis.conf"  # Remove existing genesis
+echo "2" >> "${parent_path}/genesis.conf"  # Configure new genesis
+echo "1" >> "${parent_path}/genesis.conf"  # Create new genesis from scratch
+echo "2" >> "${parent_path}/genesis.conf"  # Clique - proof-of-authority
+echo "15" >> "${parent_path}/genesis.conf" # 15 seconds block time
+
+# List of sealers
+for INDEX in $(seq 1 $NUM_NODES);
+do
+    echo $INDEX
+    KEY_FILE="$INDEX"
+    KEY=$(cat "${parent_path}/keystores/$KEY_FILE/$KEY_FILE")
+    echo $KEY
+    echo ${KEY:12:40} >> "${parent_path}/genesis.conf"
+done
+echo "" >> "${parent_path}/genesis.conf"
+
+# List of pre-funded accounts
+
+for INDEX in $(seq 1 $NUM_NODES);
+do
+    echo $INDEX
+    KEY_FILE="$INDEX"
+    KEY=$(cat "${parent_path}/keystores/$KEY_FILE/$KEY_FILE")
+    echo ${KEY:12:40} >> "${parent_path}/genesis.conf"
+done
+# Finally, pre-fund the contract address
+echo ${CONTRACTADDRESS} >> "${parent_path}/genesis.conf"
+
+echo "" >> "${parent_path}/genesis.conf"
+
+echo "yes" >> "${parent_path}/genesis.conf"  # Pre-compile addresses
+echo "1515" >> "${parent_path}/genesis.conf" # Netid
+echo "2" >> "${parent_path}/genesis.conf"    # Manage existing genesis 
+echo "2" >> "${parent_path}/genesis.conf"    # Export genesis configurations
+
+ # Export Path
+echo ${parent_path} >> "${parent_path}/genesis.conf"
+
+########## Generate Genesis Block ############
+echo "Generating Genesis Block..."
+cat "${parent_path}/genesis.conf" | "${parent_path}/puppeth" --network=pipucks # >/dev/null 2>&1
+#rm /home/"$USER"/mygethnode/genesis/pipucks-harmony.json
+rm "${parent_path}/genesis.conf"
+rm "${parent_path}/genesis_poa.json"
+mv "${parent_path}/pipucks.json" "${parent_path}/genesis_poa.json"
+
+########## Upload Genesis File ############
+#echo "Uploading Genesis Block..."
+#./scp-all /home/"$USER"/mygethnode/genesis/pipucks.json mygethnode/genesis
+#wait
