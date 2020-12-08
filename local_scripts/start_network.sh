@@ -9,7 +9,7 @@ cd "$parent_path"
 CONTRACTBASE="Estimation"
 
 N=$1
-SLEEPTIME=45
+SLEEPTIME=35
 
 source global_config_blockchain.sh
 source ${ARGOSFOLDER}/global_config.sh

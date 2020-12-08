@@ -8,7 +8,7 @@ contract Estimation {
   int  public tau = 100000;
   uint public consensusReached = 1;
   uint public startBlock = 0;
-  uint public valueUBI = 40;
+  uint public valueUBI = 20;
   uint public publicPayoutUBI = 0;
   uint public publicLength = 0;	
   uint public roundCount = 0;
@@ -85,6 +85,8 @@ contract Estimation {
   function registerRobot() public {
 
     publicLength = blocksUBI.length;	   
+    mean = 5000000;
+    ticketPrice = 40;
 
     if (!robot[msg.sender].isRegistered) {
         robot[msg.sender].robotAddress = msg.sender;
@@ -104,7 +106,7 @@ contract Estimation {
 
     // Update the UBI due
     uint payoutUBI;
-    uint myValueUBI = 40;
+    uint myValueUBI = 20;
 
     for (uint i = 0; i < myBlocksUBI.length; i++) {
       if (block.number-startBlock < myBlocksUBI[i]) {

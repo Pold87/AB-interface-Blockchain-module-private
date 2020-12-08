@@ -16,4 +16,5 @@ bash /root/get_enode.sh
 sleep 1
 bash /root/exec_template.sh "/root/templates/unlockAccount.txt"
 sleep 1
+node /root/shared/blockTimer.js &
 tail -f /dev/null

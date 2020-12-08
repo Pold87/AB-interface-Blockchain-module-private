@@ -1,1 +1,1 @@
-ARGOSFOLDER="/home/volker/Documents/mygithub-software/AB-interface/ARGoS-module/"
+ARGOSFOLDER="/home/eksander/AB-interface/ARGoS-module/"
