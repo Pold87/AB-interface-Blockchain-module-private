@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 contract Estimation {
 
   int  public mean = 5000000;
@@ -19,15 +19,15 @@ contract Estimation {
   bool public newRound = false;
   uint[10] blocksUBI = [0,2,4,8,16,32,64,128,256,512]; 
   int256 W_n;
-  address payable [] public robotsToPay;
+  address [] public robotsToPay;
 
   struct voteInfo {
-      address payable robotAddress;
+      address robotAddress;
       int256 vote;
     }
   
   struct robotInfo {
-      address payable robotAddress;
+      address robotAddress;
       bool isRegistered;
       uint payout;
       uint lastUBI;
@@ -56,6 +56,10 @@ contract Estimation {
 
   function UBIlength() public view returns (uint) {
     return blocksUBI.length;
+  }
+
+  function getBalance() public view returns (uint) {
+    return msg.sender.balance;
   }
 
 //  function isConverged() public view returns (bool) {
@@ -118,7 +122,7 @@ contract Estimation {
 
     // Transfer the UBI due
     if (payoutUBI > 0) {
-      msg.sender.transfer(payoutUBI * 1 ether);
+      payable(msg.sender).transfer(payoutUBI * 1 ether);
     }
     return payoutUBI;
   }
@@ -132,7 +136,7 @@ contract Estimation {
     uint payout = robot[msg.sender].payout;
 
     // Transfer the payout due
-    msg.sender.transfer(payout * 1 ether);
+    payable(msg.sender).transfer(payout * 1 ether);
     robot[msg.sender].payout = 0;
     return payout;
   }    
